@@ -6,3 +6,4 @@ noto-fonts-emoji
 otf-font-awesome
 ttf-meslo-nerd
 ttf-jetbrains-mono-nerd
+ttf-hack-nerd
