@@ -1,0 +1,101 @@
+# Base
+git
+base-devel
+curl
+
+# Core tools
+jq
+neovim
+inetutils
+pacman-contrib
+qt5-tools
+nmap
+alacritty
+
+# Clipboard / auth
+wl-clipboard
+keepassxc
+
+# Audio
+pipewire
+pipewire-pulse
+wireplumber
+pavucontrol
+
+# System / disks
+gnome-disk-utility
+udiskie
+
+# Viewers / archive
+okular
+eog
+atool
+
+# Process and file tools
+yazi
+ffmpeg
+7zip
+poppler
+fd
+ripgrep
+fzf
+zoxide
+resvg
+imagemagick
+
+# Desktop / Hypr
+hyprland
+hyprpicker
+
+# Noctalia optional dependencies
+qt6-multimedia
+
+# File manager & system tray
+nautilus
+
+# Wi-Fi (iwd only)
+iwd
+
+# Hardware / media keys
+brightnessctl
+playerctl
+
+# Wayland portals
+xdg-desktop-portal
+xdg-desktop-portal-hyprland
+
+# Terminal workflow
+zsh
+trash-cli
+tmux
+lsd
+lazygit
+
+# Bluetooth
+bluez
+bluez-utils
+
+# Dev
+go
+gopls
+docker
+docker-compose
+nodejs
+npm
+vscode-html-languageserver
+unzip
+php
+composer
+
+# Zsh plugins and helpers
+zsh-autosuggestions
+zsh-syntax-highlighting
+navi
+
+# Neovim tooling
+tar
+wget
+
+# Media
+vlc 
+vlc-plugins-all

@@ -1,0 +1,14 @@
+thorium-browser-bin
+etcher
+calcure
+hyprshot
+postman-bin
+ledger-udev
+ledger-live-bin
+iwgtk
+# Noctalia shell
+noctalia-shell
+noctalia-qs
+# Noctalia optional dependencies
+cliphist
+matugen
