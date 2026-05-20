@@ -1,0 +1,25 @@
+{
+  "id": "language-indicator",
+  "name": "Language Indicator",
+  "version": "1.0.0",
+  "minNoctaliaVersion": "4.6.8",
+  "author": "Marko Jovanovic",
+  "license": "MIT",
+  "description": "Shows the active Hyprland keyboard layout; left-click cycles.",
+  "tags": ["Bar"],
+  "entryPoints": {
+    "barWidget": "BarWidget.qml",
+    "settings": "Settings.qml"
+  },
+  "dependencies": {
+    "plugins": []
+  },
+  "metadata": {
+    "defaultSettings": {
+      "label0": "EN",
+      "label1": "SR",
+      "label2": "RS",
+      "customColor": "none"
+    }
+  }
+}

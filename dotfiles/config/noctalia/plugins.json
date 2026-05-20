@@ -7,6 +7,14 @@
         }
     ],
     "states": {
+        "language-indicator": {
+            "enabled": true,
+            "sourceUrl": ""
+        },
+        "sticky-notes": {
+            "enabled": true,
+            "sourceUrl": "https://github.com/noctalia-dev/noctalia-plugins"
+        },
         "weather-indicator": {
             "enabled": true,
             "sourceUrl": "https://github.com/noctalia-dev/noctalia-plugins"
