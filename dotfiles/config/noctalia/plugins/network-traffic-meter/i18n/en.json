@@ -1,0 +1,24 @@
+{
+  "menu": {
+    "settings": "Widget Settings"
+  },
+  "settings": {
+    "customColor": {
+      "label": "Custom color",
+      "desc": "Color used for the meter text and icons."
+    },
+    "updateInterval": {
+      "label": "Update interval",
+      "desc": "How often the meter samples /proc/net/dev."
+    },
+    "hideWhenZero": {
+      "label": "Hide when idle",
+      "desc": "Hide the widget when both directions are at zero."
+    },
+    "interval": {
+      "half": "0.5 seconds",
+      "one": "1 second",
+      "two": "2 seconds"
+    }
+  }
+}

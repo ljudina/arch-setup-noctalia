@@ -182,6 +182,21 @@
                 {
                     "defaultSettings": {
                         "customColor": "none",
+                        "hideWhenZero": false,
+                        "updateIntervalMs": 1000
+                    },
+                    "id": "plugin:network-traffic-meter"
+                },
+                {
+                    "defaultSettings": {
+                        "customColor": "none",
+                        "updateIntervalMs": 2000
+                    },
+                    "id": "plugin:network-toggle"
+                },
+                {
+                    "defaultSettings": {
+                        "customColor": "none",
                         "label0": "EN",
                         "label1": "SR",
                         "label2": "RS"
@@ -481,7 +496,7 @@
         "bluetoothRssiPollIntervalMs": 60000,
         "bluetoothRssiPollingEnabled": false,
         "disableDiscoverability": false,
-        "networkPanelView": "ethernet",
+        "networkPanelView": "wifi",
         "wifiDetailsViewMode": "grid"
     },
     "nightLight": {

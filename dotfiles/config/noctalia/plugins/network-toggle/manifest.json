@@ -1,0 +1,23 @@
+{
+  "id": "network-toggle",
+  "name": "Network Toggle",
+  "version": "1.0.0",
+  "minNoctaliaVersion": "4.6.8",
+  "author": "Marko Jovanovic",
+  "license": "MIT",
+  "description": "Toggles NetworkManager networking from the bar.",
+  "tags": ["Bar", "Network"],
+  "entryPoints": {
+    "barWidget": "BarWidget.qml",
+    "settings": "Settings.qml"
+  },
+  "dependencies": {
+    "plugins": []
+  },
+  "metadata": {
+    "defaultSettings": {
+      "customColor": "none",
+      "updateIntervalMs": 2000
+    }
+  }
+}

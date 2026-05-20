@@ -1,0 +1,24 @@
+{
+  "id": "network-traffic-meter",
+  "name": "Network Traffic Meter",
+  "version": "1.0.0",
+  "minNoctaliaVersion": "4.6.8",
+  "author": "Marko Jovanovic",
+  "license": "MIT",
+  "description": "Shows live network traffic and toggles NetworkManager networking.",
+  "tags": ["Bar", "Network"],
+  "entryPoints": {
+    "barWidget": "BarWidget.qml",
+    "settings": "Settings.qml"
+  },
+  "dependencies": {
+    "plugins": []
+  },
+  "metadata": {
+    "defaultSettings": {
+      "customColor": "none",
+      "updateIntervalMs": 1000,
+      "hideWhenZero": false
+    }
+  }
+}

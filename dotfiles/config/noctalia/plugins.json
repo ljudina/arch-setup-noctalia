@@ -11,6 +11,14 @@
             "enabled": true,
             "sourceUrl": ""
         },
+        "network-traffic-meter": {
+            "enabled": true,
+            "sourceUrl": ""
+        },
+        "network-toggle": {
+            "enabled": true,
+            "sourceUrl": ""
+        },
         "sticky-notes": {
             "enabled": true,
             "sourceUrl": "https://github.com/noctalia-dev/noctalia-plugins"

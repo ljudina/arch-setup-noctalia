@@ -1,0 +1,28 @@
+{
+  "menu": {
+    "settings": "Widget Settings"
+  },
+  "tooltip": {
+    "networkingEnabled": "NetworkManager networking enabled",
+    "networkingDisabled": "NetworkManager networking disabled",
+    "networkingUnknown": "NetworkManager unavailable",
+    "toggleOff": "Click to turn networking off",
+    "toggleOn": "Click to turn networking on",
+    "unavailable": "Install and run NetworkManager for this toggle"
+  },
+  "settings": {
+    "customColor": {
+      "label": "Custom color",
+      "desc": "Color used for the network toggle icon."
+    },
+    "updateInterval": {
+      "label": "Update interval",
+      "desc": "How often the toggle checks NetworkManager state."
+    },
+    "interval": {
+      "one": "1 second",
+      "two": "2 seconds",
+      "five": "5 seconds"
+    }
+  }
+}
