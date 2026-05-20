@@ -60,6 +60,9 @@ iwd
 brightnessctl
 playerctl
 
+# Power management
+power-profiles-daemon
+
 # Wayland portals
 xdg-desktop-portal
 xdg-desktop-portal-hyprland
