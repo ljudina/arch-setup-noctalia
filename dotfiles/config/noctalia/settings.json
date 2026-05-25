@@ -474,12 +474,12 @@
         "suspendTimeout": 0
     },
     "location": {
-        "analogClockInCalendar": false,
-        "autoLocate": false,
+        "analogClockInCalendar": true,
+        "autoLocate": true,
         "firstDayOfWeek": -1,
         "hideWeatherCityName": false,
         "hideWeatherTimezone": false,
-        "name": "belgrade",
+        "name": "Belgrade",
         "showCalendarEvents": true,
         "showCalendarWeather": true,
         "showWeekNumberInCalendar": true,
