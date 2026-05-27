@@ -24,6 +24,7 @@ Item {
   property int activeIndex: 0
   property string activeKeymap: ""
   property string keyboardName: "main"
+  property bool initialized: false
 
   readonly property string displayLabel: {
     const key = "label" + activeIndex
@@ -61,9 +62,18 @@ Item {
           const kbs = devices.keyboards || []
           let kb = kbs.find(k => k.main) || kbs[0]
           if (kb) {
-            root.activeIndex = kb.active_layout_index ?? 0
+            const newIndex = kb.active_layout_index ?? 0
+            const changed = root.initialized && newIndex !== root.activeIndex
+            root.activeIndex = newIndex
             root.activeKeymap = kb.active_keymap ?? ""
             root.keyboardName = kb.name || "main"
+            if (changed) {
+              // hyprctl reports bare "Serbian" for the Cyrillic rs layout
+              // (Latin reports "Serbian (Latin)"); qualify it explicitly.
+              const desc = root.activeKeymap === "Serbian" ? "Serbian (Cyrillic)" : root.activeKeymap
+              ToastService.showNotice(root.displayLabel, desc)
+            }
+            root.initialized = true
           }
         } catch (e) {
           Logger.e("LanguageIndicator", "Failed to parse hyprctl output: " + e)
