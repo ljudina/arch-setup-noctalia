@@ -56,6 +56,7 @@ The main goals are:
     │   │   ├── hyprland.conf
     │   │   └── scripts/        # autostart, lid/monitor watchers, AC watcher
     │   ├── noctalia/           # shell settings, plugins, color schemes
+    │   ├── foot/               # foot terminal config (Catppuccin Mocha)
     │   ├── thorium/            # Thorium browser profile bits
     │   └── yazi/
     └── Pictures/
