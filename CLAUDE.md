@@ -72,7 +72,7 @@ Noctalia replaces waybar, rofi, hyprlock, and hyprpaper. Installed from AUR (`no
 
 Wired into `hyprland.conf` via `exec`, `exec-once`, or `bindl`:
 
-- `autostart.sh` -- launches `udiskie` (USB automount), `iwgtk` (Wi-Fi tray), and the AC-power watcher; invoked via `exec-once`
+- `autostart.sh` -- starts the `foot --server` daemon (shared backend for all `footclient` instances) plus a startup `footclient` pinned to workspace 2, and launches `udiskie` (USB automount), `iwgtk` (Wi-Fi tray), and the AC-power watcher; invoked via `exec-once`
 - `ac-power-watcher.sh` -- background loop that flips `power-profiles-daemon` between `performance` (AC online) and `power-saver` (AC offline); only acts on state changes so manual selection sticks
 - `lid-monitor.sh` -- reconciles the `eDP-1` panel against `/proc/acpi/button/lid/*/state`; idempotent, safe to call from lid event, hotplug, or session start
 - `monitor-watcher.sh` -- parallel watcher on Hyprland IPC and `/proc` lid state that re-runs `lid-monitor.sh` (works around dropped `bindl` lid events during dock hotplug cascades)

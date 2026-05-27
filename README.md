@@ -17,7 +17,7 @@ The main goals are:
 - Hyprland compositor with monitor hotplug + lid reconciliation scripts
 - Noctalia Shell (replaces Waybar, Rofi, Hyprlock, Hyprpaper)
 - Matugen-driven Material Design 3 theming sourced into Hyprland
-- Alacritty terminal with Catppuccin Mocha theme
+- Foot terminal (foot server/client via `footclient`)
 - Yazi file manager configuration
 - Oh My Zsh with Powerlevel10k and Arch-native Zsh plugins (autosuggestions + syntax highlighting)
 - Atuin shell history sync
@@ -52,7 +52,6 @@ The main goals are:
     │   ├── .zshrc
     │   └── .p10k.zsh
     ├── config/
-    │   ├── alacritty/          # terminal + Catppuccin Mocha theme
     │   ├── hypr/
     │   │   ├── hyprland.conf
     │   │   └── scripts/        # autostart, lid/monitor watchers, AC watcher

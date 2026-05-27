@@ -10,7 +10,7 @@ inetutils
 pacman-contrib
 qt5-tools
 nmap
-alacritty
+foot
 
 # Clipboard / auth
 wl-clipboard
