@@ -56,6 +56,25 @@ mkdir -p "$HOME/.config/hypr/noctalia"
 for f in colors.conf layout.conf outputs.conf; do
   [[ -f "$HOME/.config/hypr/noctalia/$f" ]] || touch "$HOME/.config/hypr/noctalia/$f"
 done
+
+# xdg-desktop-portal 1.22+ has Requisite=graphical-session.target. A bare
+# Hyprland session never activates that target, so the portal fails to start
+# and GTK/libadwaita apps fall back to the light theme. Provide a session
+# target (started from hyprland.conf) that binds graphical-session.target.
+mkdir -p "$HOME/.config/systemd/user"
+session_target="$HOME/.config/systemd/user/hyprland-session.target"
+if [[ ! -f "$session_target" ]]; then
+  log "Creating systemd hyprland-session.target"
+  cat > "$session_target" <<'EOF'
+[Unit]
+Description=Hyprland session
+Documentation=man:systemd.special(7)
+BindsTo=graphical-session.target
+Wants=graphical-session-pre.target
+After=graphical-session-pre.target
+EOF
+  systemctl --user daemon-reload 2>/dev/null || true
+fi
 if [[ -d "$HOME/.local/share/nvim-php-config" ]]; then
   link_one "$HOME/.local/share/nvim-php-config" "$HOME/.config/nvim"
 else

@@ -53,6 +53,9 @@ The `link_one()` function backs up existing real files, updates stale symlinks, 
 After linking, the script also:
 - `chmod +x` on every `~/.config/hypr/scripts/*.sh`
 - symlinks `~/.local/share/nvim-php-config` -> `~/.config/nvim` (the Neovim config cloned by `65-nvim.sh`)
+- writes `~/.config/systemd/user/hyprland-session.target` if missing (see below)
+
+`hyprland-session.target` is a systemd user target that `BindsTo` `graphical-session.target`. `hyprland.conf` starts it via `exec-once = systemctl --user start hyprland-session.target`, which activates `graphical-session.target`. `xdg-desktop-portal` 1.22+ has `Requisite=graphical-session.target`, so without this the portal never starts and GTK/libadwaita apps (Nautilus, LibreOffice) fall back to the light theme regardless of the gsettings/Noctalia dark setting.
 
 Empty Noctalia config stubs (`~/.config/hypr/noctalia/{colors,layout,outputs}.conf`) are created by both `60-tools.sh` and `70-dotfiles.sh` since Hyprland `source` directives fail on missing files.
 
