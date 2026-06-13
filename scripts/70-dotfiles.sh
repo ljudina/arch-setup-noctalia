@@ -42,9 +42,19 @@ sync_dir_entries() {
   for item in "$src_root"/*; do
     local base
     base="$(basename "$item")"
+    # .zshrc holds machine-local secrets and is gitignored; the repo only
+    # ships .zshrc.template. Skip the template itself (handled below).
+    [[ "$base" == ".zshrc.template" ]] && continue
     link_one "$item" "$dst_root/$base"
   done
 }
+
+# Materialize a local .zshrc from the tracked template on first install.
+# The live .zshrc is gitignored so per-machine secrets never get committed.
+if [[ -f "$DOT/home/.zshrc.template" && ! -e "$DOT/home/.zshrc" ]]; then
+  log "Creating dotfiles/home/.zshrc from template"
+  cp "$DOT/home/.zshrc.template" "$DOT/home/.zshrc"
+fi
 
 log "Applying dotfiles via symlinks"
 sync_dir_entries "$DOT/home"   "$HOME"
