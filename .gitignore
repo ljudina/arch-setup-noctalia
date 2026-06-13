@@ -3,3 +3,6 @@ dotfiles/config/nvim
 
 # Browser profile (runtime state, not a dotfile) lives in ~/.config/thorium
 dotfiles/config/thorium
+
+# zshrc
+dotfiles/home/.zshrc
