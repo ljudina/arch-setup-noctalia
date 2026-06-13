@@ -1,2 +1,5 @@
 # External Neovim config (managed separately)
 dotfiles/config/nvim
+
+# Browser profile (runtime state, not a dotfile) lives in ~/.config/thorium
+dotfiles/config/thorium
