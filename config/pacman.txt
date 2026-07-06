@@ -5,7 +5,6 @@ curl
 
 # Core tools
 jq
-neovim
 inetutils
 pacman-contrib
 qt5-tools

@@ -16,3 +16,16 @@ else
   mkdir -p "$(dirname "$NVIM_DIR")"
   git clone "$NVIM_REPO" "$NVIM_DIR"
 fi
+
+# Bootstrap/update the Neovim binary itself into /opt/nvim. The pacman 'neovim'
+# package is intentionally not installed (removed from config/pacman.txt) in
+# favor of this script-managed build, so a fresh machine depends on this step
+# for the nvim binary. update_nvim.sh needs root and only re-downloads when a
+# newer release exists, so it is safe to run on every install.
+UPDATE_SCRIPT="$NVIM_DIR/update_nvim.sh"
+if [[ -f "$UPDATE_SCRIPT" ]]; then
+  log "Installing/updating Neovim binary into /opt/nvim"
+  sudo bash "$UPDATE_SCRIPT" || log "Neovim binary update failed (continuing)"
+else
+  log "update_nvim.sh not found in config repo, skipping Neovim binary install"
+fi

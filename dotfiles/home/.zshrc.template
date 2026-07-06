@@ -123,7 +123,7 @@ alias grep="rg"
 eval "$(atuin init zsh)"
 eval "$(navi widget zsh)"
 
-export PATH=$PATH:~/.local/share/bob/nvim-bin
+export PATH="/opt/nvim/bin:$PATH"
 
 export GOPATH=$HOME/go
 export PATH=$PATH:$GOPATH/bin
