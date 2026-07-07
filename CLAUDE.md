@@ -29,6 +29,7 @@ Safe to re-run at any time. All package installs use `--needed --noconfirm`. Exi
 60-tools.sh   -> Atuin, Go tools, Noctalia setup
 65-nvim.sh    -> clone/update ljudina/php.nvim into ~/.local/share/nvim-php-config
 70-dotfiles.sh-> symlink dotfiles/ into ~ and ~/.config
+45-powerfix.sh-> install on-battery CPU power cap from powerfix/
 40-services.sh-> enable iwd, bluetooth, power-profiles-daemon, docker (runs last)
 ```
 
@@ -79,6 +80,12 @@ Wired into `hyprland.conf` via `exec`, `exec-once`, or `bindl`:
 - `ac-power-watcher.sh` -- background loop that flips `power-profiles-daemon` between `performance` (AC online) and `power-saver` (AC offline); only acts on state changes so manual selection sticks
 - `lid-monitor.sh` -- reconciles the `eDP-1` panel against `/proc/acpi/button/lid/*/state`; idempotent, safe to call from lid event, hotplug, or session start
 - `monitor-watcher.sh` -- parallel watcher on Hyprland IPC and `/proc` lid state that re-runs `lid-monitor.sh` (works around dropped `bindl` lid events during dock hotplug cascades)
+
+### Power Fix (`powerfix/`, `45-powerfix.sh`)
+
+Caps CPU package power (MSR RAPL) while on battery to prevent hard power-offs when CPU peak draw exceeds what the battery pack can deliver (hit on ThinkPad P14s Gen 4 / i7-1370P during video calls). Portable across laptops: the script detects the Mains supply by type, captures the machine's own firmware limits at boot into `/run/rapl-powercap.stock`, and applies battery caps as percentages of them (PL1 40%, PL2 60%, PL4 50%; override via `/etc/default/rapl-powercap`). No-ops on hardware without Intel RAPL (AMD), so it installs everywhere.
+
+Deployed as: `/usr/local/bin/rapl-powercap.sh` (logic), a udev rule (re-apply on plug/unplug), `rapl-powercap.service` (apply at boot), and a system-sleep hook (re-apply after resume, since MSR limits reset on wake). Check activity with `journalctl -t rapl-powercap`.
 
 ### Neovim
 

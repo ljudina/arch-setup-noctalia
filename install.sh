@@ -21,6 +21,7 @@ run_step "50-ohmyzsh.sh"
 run_step "60-tools.sh"
 run_step "65-nvim.sh"
 run_step "70-dotfiles.sh"
+run_step "45-powerfix.sh"
 run_step "40-services.sh"
 
 log "All done."

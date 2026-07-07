@@ -1,0 +1,3 @@
+# Re-apply CPU power limits when the AC adapter is plugged/unplugged.
+# Matches by supply type so it works regardless of the adapter's name.
+SUBSYSTEM=="power_supply", ATTR{type}=="Mains", ACTION=="change", RUN+="/usr/local/bin/rapl-powercap.sh"

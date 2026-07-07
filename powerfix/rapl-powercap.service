@@ -1,0 +1,10 @@
+[Unit]
+Description=Apply RAPL power limits based on AC state
+After=multi-user.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/rapl-powercap.sh
+
+[Install]
+WantedBy=multi-user.target
