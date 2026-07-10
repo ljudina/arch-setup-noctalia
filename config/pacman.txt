@@ -14,6 +14,7 @@ foot
 # Clipboard / auth
 wl-clipboard
 keepassxc
+wl-clip-persist
 
 # Audio
 pipewire
