@@ -88,6 +88,7 @@ vscode-html-languageserver
 unzip
 php
 composer
+gedit
 
 # Zsh plugins and helpers
 zsh-autosuggestions
