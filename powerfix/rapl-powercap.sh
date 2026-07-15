@@ -18,9 +18,13 @@ STOCK=/run/rapl-powercap.stock
 
 # Battery caps as percent of firmware defaults.
 # Override in /etc/default/rapl-powercap if a machine needs different values.
+# PL2/PL4 were 60/50 originally; a hard power-off still occurred on battery
+# during a video call with those caps (2026-07-15), so burst and peak are
+# now held close to the sustained limit. Millisecond peaks trip the pack's
+# overcurrent cutoff even when the sustained draw is fine.
 BAT_PL1_PCT=40   # sustained
-BAT_PL2_PCT=60   # short burst
-BAT_PL4_PCT=50   # instantaneous peak
+BAT_PL2_PCT=45   # short burst
+BAT_PL4_PCT=30   # instantaneous peak
 [ -f /etc/default/rapl-powercap ] && . /etc/default/rapl-powercap
 
 # Find the AC adapter; its name differs across vendors (AC, ACAD, ADP1, ...)
