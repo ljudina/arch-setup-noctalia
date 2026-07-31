@@ -70,7 +70,7 @@ done
 # xdg-desktop-portal 1.22+ has Requisite=graphical-session.target. A bare
 # Hyprland session never activates that target, so the portal fails to start
 # and GTK/libadwaita apps fall back to the light theme. Provide a session
-# target (started from hyprland.lua) that binds graphical-session.target.
+# target (started from hyprland.conf) that binds graphical-session.target.
 mkdir -p "$HOME/.config/systemd/user"
 session_target="$HOME/.config/systemd/user/hyprland-session.target"
 if [[ ! -f "$session_target" ]]; then

@@ -32,7 +32,7 @@ setup_noctalia() {
 
   log "Running Noctalia initial setup"
 
-  # Noctalia is started directly from the hyprland.start handler in hyprland.lua
+  # Noctalia is started directly via exec-once in hyprland.conf
   # Disable the systemd user service to avoid race conditions
   systemctl --user disable noctalia-shell 2>/dev/null || true
 
