@@ -31,7 +31,7 @@ log "lid=$LID external_count=$EXTERNAL_COUNT"
 # "disable" flag through hyprctl keyword alone:
 #   1. preferred,auto,1  (the normal form)
 #   2. preferred,0x0,1   (explicit position — works in some stuck-disable states)
-#   3. hyprctl reload    (re-reads hyprland.conf where monitor=eDP-1 is static)
+#   3. hyprctl reload    (re-reads hyprland.lua where monitor eDP-1 is static)
 # Logs the .disabled flag at each step so we can see which tier actually worked.
 is_disabled() {
     hyprctl monitors all -j | jq -r --arg m "$MONITOR" \
@@ -51,8 +51,9 @@ enable_monitor() {
         d=$(is_disabled)
         log "  step2 result: disabled=$d"
     fi
-    # Guard step3 against recursion: hyprland.conf has `exec = lid-monitor.sh`,
-    # which re-fires the script on every reload. Skip step3 if we just did it.
+    # Guard step3 against recursion: hyprland.lua exec_cmd's lid-monitor.sh at
+    # top level, which re-fires the script on every reload. Skip step3 if we
+    # just did it.
     local guard=/tmp/lid-monitor-reload.guard
     local guard_age=999
     if [[ -f "$guard" ]]; then
