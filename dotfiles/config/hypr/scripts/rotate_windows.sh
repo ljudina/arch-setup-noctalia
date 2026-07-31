@@ -8,5 +8,5 @@ count=$(hyprctl clients -j | jq '[.[] | select(.workspace.id == '"$(hyprctl acti
 
 # Perform (count - 1) swaps to rotate the layout
 for ((i = 0; i < count - 1; i++)); do
-    hyprctl dispatch swapwindow r
+    hyprctl dispatch 'hl.dsp.window.swap({ direction = "right" })'
 done

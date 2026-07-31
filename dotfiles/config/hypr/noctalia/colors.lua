@@ -1,0 +1,1 @@
+-- Reserved for Noctalia-generated Hyprland color settings.

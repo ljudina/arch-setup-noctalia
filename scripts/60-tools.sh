@@ -32,13 +32,13 @@ setup_noctalia() {
 
   log "Running Noctalia initial setup"
 
-  # Noctalia is started directly via exec-once in hyprland.conf
+  # Noctalia is started from the Hyprland startup event in hyprland.lua
   # Disable the systemd user service to avoid race conditions
   systemctl --user disable noctalia-shell 2>/dev/null || true
 
-  # Create hypr/noctalia directory for config includes
+  # Create Hyprland Lua include stubs used by Noctalia integration
   mkdir -p "$HOME/.config/hypr/noctalia"
-  for f in colors.conf layout.conf outputs.conf; do
+  for f in colors.lua layout.lua outputs.lua; do
     [[ -f "$HOME/.config/hypr/noctalia/$f" ]] || touch "$HOME/.config/hypr/noctalia/$f"
   done
 }

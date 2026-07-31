@@ -31,7 +31,7 @@ log "lid=$LID external_count=$EXTERNAL_COUNT"
 # "disable" flag through hyprctl keyword alone:
 #   1. preferred,auto,1  (the normal form)
 #   2. preferred,0x0,1   (explicit position — works in some stuck-disable states)
-#   3. hyprctl reload    (re-reads hyprland.conf where monitor=eDP-1 is static)
+#   3. hyprctl reload    (re-reads hyprland.lua where eDP-1 is static)
 # Logs the .disabled flag at each step so we can see which tier actually worked.
 is_disabled() {
     hyprctl monitors all -j | jq -r --arg m "$MONITOR" \
@@ -39,20 +39,19 @@ is_disabled() {
 }
 enable_monitor() {
     local d
-    log "  step1: hyprctl keyword monitor $MONITOR, preferred, auto, 1"
-    hyprctl keyword monitor "$MONITOR, preferred, auto, 1"
+    log "  step1: configure $MONITOR at preferred/auto/1"
+    hyprctl eval "hl.monitor({ output = '$MONITOR', mode = 'preferred', position = 'auto', scale = 1 })"
     sleep 0.3
     d=$(is_disabled)
     log "  step1 result: disabled=$d"
     if [[ "$d" == "true" ]]; then
-        log "  step2: hyprctl keyword monitor $MONITOR, preferred, 0x0, 1"
-        hyprctl keyword monitor "$MONITOR, preferred, 0x0, 1"
+        log "  step2: configure $MONITOR at preferred/0x0/1"
+        hyprctl eval "hl.monitor({ output = '$MONITOR', mode = 'preferred', position = '0x0', scale = 1 })"
         sleep 0.3
         d=$(is_disabled)
         log "  step2 result: disabled=$d"
     fi
-    # Guard step3 against recursion: hyprland.conf has `exec = lid-monitor.sh`,
-    # which re-fires the script on every reload. Skip step3 if we just did it.
+    # Keep a reload guard in case this script is invoked by another reload hook.
     local guard=/tmp/lid-monitor-reload.guard
     local guard_age=999
     if [[ -f "$guard" ]]; then
@@ -68,7 +67,7 @@ enable_monitor() {
     elif [[ "$d" == "true" ]]; then
         log "  step3 skipped (reload guard active, age=${guard_age}s)"
     fi
-    hyprctl dispatch dpms on "$MONITOR" >/dev/null 2>&1 || true
+    hyprctl dispatch "hl.dsp.dpms({ action = 'enable', monitor = '$MONITOR' })" >/dev/null 2>&1 || true
 }
 
 if [[ "$EXTERNAL_COUNT" -eq 0 ]]; then
@@ -78,7 +77,7 @@ if [[ "$EXTERNAL_COUNT" -eq 0 ]]; then
     enable_monitor
 elif [[ "$LID" == "closed" ]]; then
     log "action: disable $MONITOR (lid closed + externals present)"
-    hyprctl keyword monitor "$MONITOR, disable"
+    hyprctl eval "hl.monitor({ output = '$MONITOR', disabled = true })"
 else
     log "action: enable $MONITOR (lid open + externals present)"
     enable_monitor

@@ -53,7 +53,7 @@ The main goals are:
     │   └── .p10k.zsh
     ├── config/
     │   ├── hypr/
-    │   │   ├── hyprland.conf
+    │   │   ├── hyprland.lua
     │   │   └── scripts/        # autostart, lid/monitor watchers, AC watcher
     │   ├── noctalia/           # shell settings, plugins, color schemes
     │   ├── foot/               # foot terminal config (Catppuccin Mocha)
@@ -130,7 +130,9 @@ Noctalia provides:
 
 Hyprland keybinds invoke Noctalia via `qs -c noctalia-shell ipc call <module> <action>` — e.g. launcher, sessionMenu, lockScreen, clipboard, notifications, audio, brightness, settings, hypr overview.
 
-Matugen writes generated theme fragments into `~/.config/hypr/noctalia/{colors,layout,outputs}.conf`, which `hyprland.conf` sources. Empty stubs are created so Hyprland's `source` directives never fail on a fresh machine.
+Hyprland uses its native Lua configuration API. Optional Noctalia integration
+fragments live in `~/.config/hypr/noctalia/{colors,layout,outputs}.lua` and are
+loaded with Lua `require`. Empty stubs are created on a fresh machine.
 
 ---
 

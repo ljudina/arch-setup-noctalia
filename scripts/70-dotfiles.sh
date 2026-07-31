@@ -63,14 +63,14 @@ mkdir -p "$HOME/Pictures"
 [[ -d "$DOT/Pictures/wallpapers" ]] && link_one "$DOT/Pictures/wallpapers" "$HOME/Pictures/wallpapers"
 chmod +x "$HOME/.config/hypr/scripts/"*.sh 2>/dev/null || true
 mkdir -p "$HOME/.config/hypr/noctalia"
-for f in colors.conf layout.conf outputs.conf; do
+for f in colors.lua layout.lua outputs.lua; do
   [[ -f "$HOME/.config/hypr/noctalia/$f" ]] || touch "$HOME/.config/hypr/noctalia/$f"
 done
 
 # xdg-desktop-portal 1.22+ has Requisite=graphical-session.target. A bare
 # Hyprland session never activates that target, so the portal fails to start
 # and GTK/libadwaita apps fall back to the light theme. Provide a session
-# target (started from hyprland.conf) that binds graphical-session.target.
+# target (started from hyprland.lua) that binds graphical-session.target.
 mkdir -p "$HOME/.config/systemd/user"
 session_target="$HOME/.config/systemd/user/hyprland-session.target"
 if [[ ! -f "$session_target" ]]; then
