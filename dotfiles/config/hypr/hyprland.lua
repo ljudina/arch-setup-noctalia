@@ -146,9 +146,20 @@ bind("SHIFT + Q", hl.dsp.window.close())
 bind("M", hl.dsp.exit())
 bind("E", hl.dsp.exec_cmd(file_manager))
 bind("V", function()
+    local win = hl.get_active_window()
+    local was_floating = win and win.floating
     hl.dispatch(hl.dsp.window.float({ action = "toggle" }))
-    hl.dispatch(hl.dsp.window.resize({ x = "50%", y = "50%" }))
-    hl.dispatch(hl.dsp.window.center())
+    if win and not was_floating then
+        local mon = hl.get_active_monitor()
+        if mon then
+            -- resize takes logical pixels only, no percent strings
+            hl.dispatch(hl.dsp.window.resize({
+                x = math.floor(mon.width / mon.scale / 2),
+                y = math.floor(mon.height / mon.scale / 2),
+            }))
+            hl.dispatch(hl.dsp.window.center())
+        end
+    end
 end)
 bind("D", hl.dsp.exec_cmd(menu))
 bind("escape", hl.dsp.exec_cmd(powermenu))
