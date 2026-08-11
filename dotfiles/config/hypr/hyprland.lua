@@ -16,6 +16,13 @@ local password_manager = 'SSH_AUTH_SOCK="$XDG_RUNTIME_DIR/ssh-agent.socket" keep
 local mail = "/opt/google/chrome/google-chrome --profile-directory=Default --app-id=faolnafnngnfdaknnbpnkhgohbobgegn %U"
 local chat = "mattermost-desktop"
 
+-- Chromium-based apps probe org.freedesktop.Notifications once at startup and
+-- fall back to their own toast windows for the whole session if the daemon is
+-- not registered yet, so wait for Noctalia's daemon before launching them.
+local function wait_notifyd(cmd)
+    return "bash -c 'for i in $(seq 1 50); do busctl --user status org.freedesktop.Notifications >/dev/null 2>&1 && break; sleep 0.2; done; exec " .. cmd .. "'"
+end
+
 hl.on("hyprland.start", function()
     hl.exec_cmd("~/.config/hypr/scripts/autostart.sh")
     hl.exec_cmd("dbus-update-activation-environment --systemd --all")
@@ -23,9 +30,9 @@ hl.on("hyprland.start", function()
     hl.exec_cmd("qs -c noctalia-shell")
     hl.exec_cmd("wl-paste --watch cliphist store")
     hl.exec_cmd("wl-clip-persist --clipboard regular")
-    hl.exec_cmd(browser, { workspace = "1 silent" })
-    hl.exec_cmd(mail, { workspace = "3 silent" })
-    hl.exec_cmd(chat, { workspace = "4 silent" })
+    hl.exec_cmd(wait_notifyd(browser), { workspace = "1 silent" })
+    hl.exec_cmd(wait_notifyd(mail), { workspace = "3 silent" })
+    hl.exec_cmd(wait_notifyd(chat), { workspace = "4 silent" })
     hl.exec_cmd("~/.config/hypr/scripts/monitor-watcher.sh")
     hl.exec_cmd("~/.config/hypr/scripts/lid-monitor.sh")
 end)
