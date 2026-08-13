@@ -150,7 +150,7 @@ end
 
 bind("RETURN", hl.dsp.exec_cmd(terminal))
 bind("SHIFT + Q", hl.dsp.window.close())
-bind("M", hl.dsp.exit())
+bind("SHIFT + M", hl.dsp.exit())
 bind("E", hl.dsp.exec_cmd(file_manager))
 bind("V", function()
     local win = hl.get_active_window()
