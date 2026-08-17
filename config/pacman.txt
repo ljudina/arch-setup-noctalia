@@ -30,6 +30,7 @@ udiskie
 okular
 eog
 atool
+xournalpp
 
 # Process and file tools
 yazi
