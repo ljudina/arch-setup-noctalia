@@ -13,7 +13,9 @@ local powermenu = "qs -c noctalia-shell ipc call sessionMenu toggle"
 local bar_toggle = "qs -c noctalia-shell ipc call bar toggle"
 local lockscreen = "sh -c 'busctl --user call org.keepassxc.KeePassXC.MainWindow /keepassxc org.keepassxc.KeePassXC.MainWindow lockAllDatabases; qs -c noctalia-shell ipc call lockScreen lock'"
 local password_manager = 'SSH_AUTH_SOCK="$XDG_RUNTIME_DIR/ssh-agent.socket" keepassxc'
-local mail = "/opt/google/chrome/google-chrome --profile-directory=Default --app-id=faolnafnngnfdaknnbpnkhgohbobgegn %U"
+-- Outlook PWA via its Chrome desktop entry; on a machine without it the
+-- script installs and launches a Gmail PWA desktop entry instead.
+local mail = "~/.config/hypr/scripts/mail.sh"
 local chat = "mattermost-desktop"
 
 -- Chromium-based apps probe org.freedesktop.Notifications once at startup and
@@ -261,6 +263,21 @@ hl.window_rule({
     name = "foot-startup-workspace",
     match = { class = "^(foot-startup)$" },
     workspace = "2 silent",
+})
+
+-- Chromium hands --app launches off to an existing browser process, so the
+-- exec workspace rule can miss; pin the mail windows by class instead. Covers
+-- both the Outlook PWA and the Gmail fallback started by scripts/mail.sh.
+hl.window_rule({
+    name = "outlook-pwa-workspace",
+    match = { class = "^(chrome-faolnafnngnfdaknnbpnkhgohbobgegn-Default)$" },
+    workspace = "3 silent",
+})
+
+hl.window_rule({
+    name = "gmail-app-workspace",
+    match = { class = "^(thorium-mail\\.google\\.com__-Default)$" },
+    workspace = "3 silent",
 })
 
 for _, namespace in ipairs({ "hyprpicker", "selection", "^(noctalia)$" }) do

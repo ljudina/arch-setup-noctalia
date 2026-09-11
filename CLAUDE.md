@@ -80,6 +80,7 @@ Wired into `hyprland.lua` via Lua startup events, direct execution, or binds:
 - `ac-power-watcher.sh` -- background loop that flips `power-profiles-daemon` between `performance` (AC online) and `power-saver` (AC offline); only acts on state changes so manual selection sticks
 - `lid-monitor.sh` -- reconciles the `eDP-1` panel against `/proc/acpi/button/lid/*/state`; idempotent, safe to call from lid event, hotplug, or session start
 - `monitor-watcher.sh` -- parallel watcher on Hyprland IPC and `/proc` lid state that re-runs `lid-monitor.sh` (works around dropped `bindl` lid events during dock hotplug cascades)
+- `mail.sh` -- startup mail client for workspace 3: launches the Chrome Outlook PWA desktop entry if present, otherwise writes a Gmail PWA desktop entry (`gmail-pwa.desktop`, a Thorium `--app` window) and launches that; both window classes are pinned to workspace 3 by window rules in `hyprland.lua`
 
 ### Power Fix (`powerfix/`, `45-powerfix.sh`)
 
