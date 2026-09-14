@@ -4,6 +4,7 @@ calcure
 hyprshot
 postman-bin
 iwgtk
+leaf-markdown-viewer
 # Noctalia shell
 noctalia-shell
 noctalia-qs
