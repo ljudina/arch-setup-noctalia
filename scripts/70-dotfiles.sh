@@ -63,6 +63,18 @@ mkdir -p "$HOME/Pictures"
 [[ -d "$DOT/Pictures/wallpapers" ]] && link_one "$DOT/Pictures/wallpapers" "$HOME/Pictures/wallpapers"
 chmod +x "$HOME/.config/hypr/scripts/"*.sh 2>/dev/null || true
 
+# Thorium's wrapper applies $XDG_CONFIG_HOME/thorium/thorium-flags.conf to
+# every launch, including ones from the Noctalia launcher that bypass
+# hypr/scripts/browser.sh. Seed it so the browser never falls back to XWayland
+# (blurry on scaled monitors). ~/.config/thorium is the profile dir, so this
+# file is generated rather than symlinked.
+thorium_flags="$HOME/.config/thorium/thorium-flags.conf"
+if [[ ! -f "$thorium_flags" ]]; then
+  log "Creating $thorium_flags"
+  mkdir -p "$(dirname "$thorium_flags")"
+  echo "--enable-features=UseOzonePlatform --ozone-platform=wayland" > "$thorium_flags"
+fi
+
 # xdg-desktop-portal 1.22+ has Requisite=graphical-session.target. A bare
 # Hyprland session never activates that target, so the portal fails to start
 # and GTK/libadwaita apps fall back to the light theme. Provide a session

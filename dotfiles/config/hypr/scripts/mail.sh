@@ -11,7 +11,7 @@ set -euo pipefail
 apps_dir="$HOME/.local/share/applications"
 outlook_entry="${OUTLOOK_ENTRY:-$apps_dir/chrome-faolnafnngnfdaknnbpnkhgohbobgegn-Default.desktop}"
 gmail_entry="${GMAIL_ENTRY:-$apps_dir/gmail-pwa.desktop}"
-browser="thorium-browser --enable-features=UseOzonePlatform --ozone-platform=wayland"
+browser="$HOME/.config/hypr/scripts/browser.sh"
 
 if [ -f "$outlook_entry" ]; then
   exec gio launch "$outlook_entry"

@@ -1,4 +1,6 @@
-thorium-browser-bin
+# AVX2 build; use thorium-browser-bin (SSE3) on CPUs without AVX2.
+# Both install a differently named binary; hypr/scripts/browser.sh resolves it.
+thorium-browser-avx2-bin
 etcher
 calcure
 hyprshot

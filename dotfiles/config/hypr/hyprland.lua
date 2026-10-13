@@ -5,7 +5,8 @@ hl.monitor({ output = "", mode = "preferred", position = "auto", scale = "auto" 
 hl.monitor({ output = "eDP-1", mode = "preferred", position = "auto", scale = 1 })
 hl.monitor({ output = "HDMI-A-1", mode = "1920x1080@60", position = "0x0", scale = 1 })
 
-local browser = "thorium-browser --enable-features=UseOzonePlatform --ozone-platform=wayland"
+-- Resolves the installed Thorium build and forces the Wayland backend.
+local browser = "~/.config/hypr/scripts/browser.sh"
 local terminal = "footclient"
 local file_manager = "nautilus"
 -- Noctalia v5 is driven over IPC with "noctalia msg <command>".
@@ -43,6 +44,9 @@ hl.env("XCURSOR_SIZE", "24")
 hl.env("HYPRCURSOR_SIZE", "24")
 hl.env("QT_QPA_PLATFORM", "wayland")
 hl.env("ELECTRON_OZONE_PLATFORM_HINT", "auto")
+-- Chromium-style wrappers (Thorium) only read ~/.config/<app>/<app>-flags.conf
+-- when XDG_CONFIG_HOME is set, so pin it to its default.
+hl.env("XDG_CONFIG_HOME", os.getenv("HOME") .. "/.config")
 
 hl.config({
     general = {
