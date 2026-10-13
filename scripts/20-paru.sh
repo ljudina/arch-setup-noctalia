@@ -9,7 +9,16 @@ if command -v paru >/dev/null 2>&1; then
   return 0
 fi
 
-log "Installing paru-bin"
+# CachyOS dropped paru from its installer (June 2026) but still ships it in
+# the [cachyos] repo. Prefer that over an AUR build when a repo has it.
+if pacman -Si paru >/dev/null 2>&1; then
+  log "Installing paru from the distro repo"
+  sudo pacman -S --needed --noconfirm paru
+  need_cmd paru
+  return 0
+fi
+
+log "Installing paru-bin from the AUR"
 tmpdir="$(mktemp -d)"
 trap 'rm -rf "$tmpdir"' EXIT
 

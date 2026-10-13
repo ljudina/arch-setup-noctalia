@@ -28,10 +28,17 @@ local function wait_notifyd(cmd)
     return "bash -c 'for i in $(seq 1 50); do busctl --user status org.freedesktop.Notifications >/dev/null 2>&1 && break; sleep 0.2; done; exec " .. cmd .. "'"
 end
 
+-- Under uwsm (CachyOS "Hyprland (UWSM)" session) Hyprland runs as a systemd
+-- user unit: graphical-session.target is bound by uwsm and the session must
+-- be stopped through it. INVOCATION_ID is only set for systemd-spawned units.
+local under_uwsm = os.getenv("INVOCATION_ID") ~= nil
+
 hl.on("hyprland.start", function()
     hl.exec_cmd("~/.config/hypr/scripts/autostart.sh")
     hl.exec_cmd("dbus-update-activation-environment --systemd --all")
-    hl.exec_cmd("systemctl --user start hyprland-session.target")
+    if not under_uwsm then
+        hl.exec_cmd("systemctl --user start hyprland-session.target")
+    end
     hl.exec_cmd("noctalia")
     hl.exec_cmd(wait_notifyd(browser), { workspace = "1 silent" })
     hl.exec_cmd(wait_notifyd(mail), { workspace = "3 silent" })
@@ -162,7 +169,7 @@ end
 
 bind("RETURN", hl.dsp.exec_cmd(terminal))
 bind("SHIFT + Q", hl.dsp.window.close())
-bind("SHIFT + M", hl.dsp.exit())
+bind("SHIFT + M", under_uwsm and hl.dsp.exec_cmd("uwsm stop") or hl.dsp.exit())
 bind("E", hl.dsp.exec_cmd(file_manager))
 bind("V", function()
     local win = hl.get_active_window()

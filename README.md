@@ -40,9 +40,9 @@ The main goals are:
 │   ├── lib.sh                  # shared helpers (log, pac_install_file, ...)
 │   ├── 00-prereq.sh            # git, base-devel, curl
 │   ├── 10-pacman.sh            # install pacman.txt + fonts.txt (incl. noctalia)
-│   ├── 20-paru.sh              # bootstrap paru-bin from AUR
+│   ├── 20-paru.sh              # paru from distro repo (CachyOS) or paru-bin from AUR
 │   ├── 30-aur.sh               # install paru.txt
-│   ├── 40-services.sh          # iwd, bluetooth, power-profiles-daemon, docker
+│   ├── 40-services.sh          # Wi-Fi (iwd), bluetooth, power-profiles-daemon, docker
 │   ├── 50-ohmyzsh.sh           # Oh My Zsh + Powerlevel10k + plugin symlinks
 │   ├── 60-tools.sh             # Atuin, Go tools, remove Noctalia v4 leftovers
 │   ├── 65-nvim.sh              # clone/update ljudina/php.nvim
@@ -84,12 +84,16 @@ Individual steps call `sudo` themselves where needed. The installer will:
 
 1. install prerequisites (`git`, `base-devel`, `curl`)
 2. install pacman packages from `config/pacman.txt` and `config/fonts.txt`
-3. bootstrap `paru` and install AUR packages from `config/paru.txt`
+3. bootstrap `paru` (from the distro repo on CachyOS, else from the AUR) and install AUR packages from `config/paru.txt`
 4. install Oh My Zsh + Powerlevel10k, set Zsh as default shell, link pacman-provided Zsh plugins
 5. install Atuin, Go tools (`templ`, `air`), remove Noctalia v4 leftovers
 6. clone/update the Neovim PHP config
 7. symlink everything in `dotfiles/` into `~` and `~/.config`
-8. enable `iwd`, `bluetooth`, `power-profiles-daemon`, and (best-effort) `docker`
+8. enable `iwd` (as the NetworkManager Wi-Fi backend when NetworkManager is installed), `bluetooth`, `power-profiles-daemon`, and (best-effort) `docker`
+
+### CachyOS
+
+The same installer works on CachyOS (tested against the August 2026 package set). Install with the "No desktop" or "Hyprland Noctalia" profile, then run `./install.sh`. If the greeter offers both, pick the plain "Hyprland" session rather than "Hyprland (UWSM)". NetworkManager stays in charge of networking; the installer switches its Wi-Fi backend to `iwd`, so saved Wi-Fi networks may need to be re-added once.
 
 ### 3. Open a new terminal
 

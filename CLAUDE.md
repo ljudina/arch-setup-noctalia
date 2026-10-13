@@ -23,14 +23,14 @@ Safe to re-run at any time. All package installs use `--needed --noconfirm`. Exi
 ```
 00-prereq.sh  -> git, base-devel, curl
 10-pacman.sh  -> packages from config/pacman.txt + config/fonts.txt (includes noctalia from extra)
-20-paru.sh     -> bootstrap paru AUR helper
+20-paru.sh     -> paru from a distro repo if one has it (CachyOS), else paru-bin from AUR
 30-aur.sh     -> packages from config/paru.txt
 50-ohmyzsh.sh -> Oh My Zsh + Powerlevel10k + zsh plugin symlinks
 60-tools.sh   -> Atuin, Go tools, remove Noctalia v4 leftovers, Noctalia check
 65-nvim.sh    -> clone/update ljudina/php.nvim into ~/.local/share/nvim-php-config
 70-dotfiles.sh-> symlink dotfiles/ into ~ and ~/.config
 45-powerfix.sh-> install on-battery CPU power cap from powerfix/
-40-services.sh-> enable iwd, bluetooth, power-profiles-daemon, docker (runs last)
+40-services.sh-> Wi-Fi (iwd, as NetworkManager backend when NM is installed), bluetooth, power-profiles-daemon, docker (runs last)
 ```
 
 Scripts are numbered for ordering but `install.sh` controls the actual sequence (note: 40 runs after 70).
@@ -106,6 +106,17 @@ External config repo (`ljudina/php.nvim`) cloned to `~/.local/share/nvim-php-con
 **Modify autostart programs:** Edit `dotfiles/config/hypr/scripts/autostart.sh`
 **Restart Noctalia (apply a config/env change):** run `~/.config/hypr/scripts/noctalia-restart.sh`. Never `pkill noctalia` directly: it is the lock-screen client, and killing it while the session is locked (e.g. while a long-running task is still working after the user pressed SUPER+L) strands the user on Hyprland's red screen. Check `noctalia msg status` (`"locked"`) before any action that disturbs the shell
 **Add a Hyprland helper script:** Place in `dotfiles/config/hypr/scripts/` (made executable on install by `70-dotfiles.sh`)
+
+## CachyOS
+
+The installer also targets CachyOS (checked against the August 2026 release). Differences it handles:
+
+- `paru` is no longer in the CachyOS installer but is in the `[cachyos]` repo; `20-paru.sh` installs from the repo when `pacman -Si paru` succeeds. `[cachyos]` sits above `[extra]` in `pacman.conf`, so repo order (not version) decides which build of a shared package name wins.
+- NetworkManager is the CachyOS default network stack. `40-services.sh` writes `/etc/NetworkManager/conf.d/wifi_backend.conf` (`wifi.backend=iwd`), disables `wpa_supplicant`, and enables `iwd`, so `iwgtk`/`iwctl` keep working without two supplicants fighting over the card. Wi-Fi profiles created under wpa_supplicant may need re-adding.
+- The CachyOS "Hyprland Noctalia" profile installs `cachyos-hypr-noctalia`, `uwsm` and `noctalia-greeter`. Choose the plain "Hyprland" session in the greeter. `hyprland.lua` still copes with the UWSM session (`INVOCATION_ID` set): it skips starting `hyprland-session.target` and exits via `uwsm stop`. The skel configs that package drops into `~/.config/hypr` and `~/.config/noctalia` are backed up by `70-dotfiles.sh`.
+- `[cachyos]` still ships `noctalia-shell` 4.x (Quickshell v4); `60-tools.sh` removes it like any other v4 leftover. Noctalia v5 (`noctalia`) comes from Arch `extra` only.
+- `linux-cachyos` builds Intel RAPL/powercap as modules, so `powerfix/` works unchanged. Do not install `tuned-cachy`; it replaces `power-profiles-daemon`, which the AC watcher needs.
+- CachyOS enables `ufw` and its own update timer (Cachy-Update); neither conflicts with this setup. CachyOS pacman blocks network access for scriptlets and hooks, which does not affect anything here.
 
 ## Conventions
 

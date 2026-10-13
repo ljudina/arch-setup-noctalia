@@ -27,6 +27,8 @@ install_go_tools() {
 remove_noctalia_v4() {
   # Noctalia v5 is a native rewrite packaged as "noctalia" in extra. The v4
   # Quickshell packages and their helpers are no longer used by this setup.
+  # CachyOS still ships noctalia-shell 4.x in its [cachyos] repo, so this also
+  # covers a CachyOS install that picked it up.
   # Removed one at a time so a package with other dependants does not block
   # the rest. -Rns also drops deps that become orphans (e.g. qt6-multimedia).
   local pkg
@@ -35,6 +37,15 @@ remove_noctalia_v4() {
     log "Removing Noctalia v4 leftover: $pkg"
     sudo pacman -Rns --noconfirm "$pkg" || warn "Could not remove $pkg (check dependants)"
   done
+}
+
+warn_uwsm_session() {
+  # CachyOS's Hyprland profile installs uwsm and a greeter offering a
+  # "Hyprland (UWSM)" session. hyprland.lua copes with it, but the plain
+  # "Hyprland" session matches how this setup is tested.
+  if pacman -Q uwsm >/dev/null 2>&1; then
+    warn "uwsm is installed: pick the plain \"Hyprland\" session in the greeter, not \"Hyprland (UWSM)\""
+  fi
 }
 
 setup_noctalia() {
@@ -60,4 +71,5 @@ install_atuin
 install_go_tools
 remove_noctalia_v4
 setup_noctalia
+warn_uwsm_session
 set_gnome_dark
