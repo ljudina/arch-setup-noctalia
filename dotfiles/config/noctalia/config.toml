@@ -1,0 +1,124 @@
+# Noctalia v5 configuration (hand-written layer).
+#
+# Every *.toml in ~/.config/noctalia is merged alphabetically and hot-reloaded.
+# Changes made in the Settings UI are written to
+# ~/.local/state/noctalia/settings.toml, which loads last and overrides this
+# file. Delete that file to return to what is declared here.
+#
+# Reference: https://docs.noctalia.dev/noctalia/configuration/
+# Full defaults: noctalia config export full
+
+[shell]
+font_family                     = "sans-serif"
+telemetry_enabled               = false
+polkit_agent                    = true     # no other polkit agent runs in this session
+clipboard_enabled               = true     # built-in history replaces cliphist
+clipboard_keep_from_closed_apps = true     # replaces wl-clip-persist
+
+# Hyprland input: kb_layout = "us,rs,rs", kb_variant = ",latin,".
+# Keys must match the names the widget shows (Noctalia abbreviates the xkb
+# descriptions); the full xkb names are kept as fallbacks.
+[shell.keyboard_layout.custom_labels]
+"English (US)"        = "EN"
+"Serbian (Lat)"       = "SR"
+"Serbian (Latin)"     = "SR"
+"Serbian (Cyr)"       = "RS"
+"Serbian (Cyrillic)"  = "RS"
+"Serbian"             = "RS"
+
+[shell.launcher]
+sort_by_usage = true
+
+[theme]
+mode    = "dark"
+source  = "builtin"
+builtin = "Catppuccin"
+
+[wallpaper]
+enabled             = true
+directory           = "~/Pictures/wallpaper"
+fill_mode           = "crop"
+transition_duration = 1500
+
+[location]
+auto_locate = true
+
+[weather]
+enabled = true
+unit    = "celsius"
+
+[notification]
+layer = "overlay"
+
+[osd]
+position = "top_right"
+
+[lockscreen]
+enabled = true
+
+# Keep GTK/libadwaita apps in sync with the shell's dark/light mode without
+# enabling the full GTK colour template.
+[hooks]
+theme_mode_changed = "/usr/share/noctalia/assets/templates/gtk/apply.sh --appearance-only $NOCTALIA_THEME_MODE"
+
+# ── Bar ───────────────────────────────────────────────────────────────────────
+
+[bar.main]
+position           = "top"
+background_opacity = 0.93
+radius             = 12
+widget_spacing     = 6
+capsule            = true
+compositor_blur    = true
+
+start  = ["workspaces", "active_window", "media"]
+center = ["launcher", "clock", "weather", "sticky-notes"]
+end    = ["tray", "net-down", "net-up", "network", "keyboard_layout", "notifications", "battery", "volume", "brightness", "control-center"]
+
+[widget.workspaces]
+labels_only_when_occupied = true
+max_label_chars           = 2
+
+[widget.clock]
+format         = "{:%H:%M %a, %b %d}"
+tooltip_format = "{:%A, %B %d, %Y}"
+
+[widget.net-down]
+type                  = "sysmon"
+stat                  = "net_rx"
+network_speed_compact = true
+
+[widget.net-up]
+type                  = "sysmon"
+stat                  = "net_tx"
+network_speed_compact = true
+
+[widget.sticky-notes]
+type = "ahmedhossamdev/sticky-notes:bar"
+
+# Middle-click opens a mixer, as the v4 bar did.
+[widget.volume.actions]
+middle = "exec sh -c 'pwvucontrol || pavucontrol'"
+
+# ── Control center ────────────────────────────────────────────────────────────
+# Up to six shortcut buttons on the Home tab.
+
+[[control_center.shortcuts]]
+type = "wifi"
+[[control_center.shortcuts]]
+type = "bluetooth"
+[[control_center.shortcuts]]
+type = "wallpaper"
+[[control_center.shortcuts]]
+type = "notification"
+[[control_center.shortcuts]]
+type = "power_profile"
+[[control_center.shortcuts]]
+type = "caffeine"
+
+# ── Plugins ───────────────────────────────────────────────────────────────────
+# The "official" and "community" git sources ship enabled by default.
+
+[plugins]
+enabled     = ["ahmedhossamdev/sticky-notes"]
+auto_update = "all"

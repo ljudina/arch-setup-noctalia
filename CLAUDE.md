@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What This Is
 
-A modular, idempotent Arch Linux setup for a Wayland-based development environment. Hyprland is the compositor, Noctalia Shell provides the desktop shell (panel, launcher, lock screen, notifications, wallpaper theming), and all configs are managed via symlinks from this repo.
+A modular, idempotent Arch Linux setup for a Wayland-based development environment. Hyprland is the compositor, Noctalia v5 (native Wayland shell, no Qt/Quickshell) provides the desktop shell (bar, launcher, lock screen, notifications, clipboard history, wallpaper theming), and all configs are managed via symlinks from this repo.
 
 ## Running the Installer
 
@@ -22,11 +22,11 @@ Safe to re-run at any time. All package installs use `--needed --noconfirm`. Exi
 
 ```
 00-prereq.sh  -> git, base-devel, curl
-10-pacman.sh  -> packages from config/pacman.txt + config/fonts.txt
+10-pacman.sh  -> packages from config/pacman.txt + config/fonts.txt (includes noctalia from extra)
 20-paru.sh     -> bootstrap paru AUR helper
-30-aur.sh     -> packages from config/paru.txt (includes noctalia-shell, noctalia-qs)
+30-aur.sh     -> packages from config/paru.txt
 50-ohmyzsh.sh -> Oh My Zsh + Powerlevel10k + zsh plugin symlinks
-60-tools.sh   -> Atuin, Go tools, Noctalia setup
+60-tools.sh   -> Atuin, Go tools, remove Noctalia v4 leftovers, Noctalia check
 65-nvim.sh    -> clone/update ljudina/php.nvim into ~/.local/share/nvim-php-config
 70-dotfiles.sh-> symlink dotfiles/ into ~ and ~/.config
 45-powerfix.sh-> install on-battery CPU power cap from powerfix/
@@ -58,19 +58,19 @@ After linking, the script also:
 
 `hyprland-session.target` is a systemd user target that `BindsTo` `graphical-session.target`. `hyprland.lua` starts it from the `hyprland.start` event, which activates `graphical-session.target`. `xdg-desktop-portal` 1.22+ has `Requisite=graphical-session.target`, so without this the portal never starts and GTK/libadwaita apps (Nautilus, LibreOffice) fall back to the light theme regardless of the gsettings/Noctalia dark setting.
 
-Empty Noctalia Lua stubs (`~/.config/hypr/noctalia/{colors,layout,outputs}.lua`) are created by both `60-tools.sh` and `70-dotfiles.sh` because `hyprland.lua` requires those modules.
-
 ### Shared Library (`scripts/lib.sh`)
 
 Key helpers: `log`/`warn`/`err` (colored output), `need_cmd` (assert command exists), `read_pkgs_file` (parse package list), `pac_install_file`/`aur_install_file` (install from list file), `enable_service_now`/`enable_service`/`start_service_timeout` (systemd wrappers).
 
 All scripts use `set -euo pipefail`.
 
-### Desktop Shell: Noctalia + Hyprland
+### Desktop Shell: Noctalia v5 + Hyprland
 
-Noctalia replaces waybar, rofi, hyprlock, and hyprpaper. Installed from AUR (`noctalia-shell`, `noctalia-qs`). Started from the `hyprland.start` event in `hyprland.lua`. Hyprland keybinds invoke Noctalia via `qs -c noctalia-shell ipc call <target> <function>` (launcher, sessionMenu, lockScreen, clipboard, notifications, audio, brightness, settings, hypr overview).
+Noctalia replaces waybar, rofi, hyprlock, hyprpaper, and cliphist. Installed from the official `extra` repo (`noctalia`, listed in `config/pacman.txt`). Started with `noctalia` from the `hyprland.start` event in `hyprland.lua`. Hyprland keybinds drive it with `noctalia msg <command>` (`panel-toggle launcher|session|clipboard`, `panel-toggle control-center notifications`, `settings-toggle`, `session lock`, `bar-toggle`, `window-switcher hold`, `volume-up|down|mute`, `mic-mute`, `brightness-up|down`). `noctalia msg --help` lists every command.
 
-`hyprland.lua` requires `~/.config/hypr/noctalia/{colors,layout,outputs}.lua` for optional Noctalia integration.
+Config is TOML: `dotfiles/config/noctalia/config.toml` (symlinked to `~/.config/noctalia/`, every `*.toml` there is merged and hot-reloaded). Changes made in the Settings UI land in `~/.local/state/noctalia/settings.toml`, which overrides the repo file and is intentionally not tracked. Plugins are Luau (`plugin.toml` + `.luau`), enabled via `[plugins].enabled`, and are fetched by the shell into `~/.local/state/noctalia/plugins/`; nothing plugin-related lives in this repo.
+
+v4 (Quickshell `noctalia-shell` + `noctalia-qs`) is unmaintained upstream and its `settings.json`/QML plugins are not compatible. `60-tools.sh` removes those packages (plus `cliphist`, `matugen`, `wl-clip-persist`, `qt6-multimedia`) when present. The optional Hyprland colour template (Settings -> Templates) writes `~/.config/hypr/noctalia.lua`, which `hyprland.lua` loads with a guarded `pcall(require, "noctalia")`.
 
 ### Hyprland Helper Scripts (`dotfiles/config/hypr/scripts/`)
 
@@ -108,6 +108,6 @@ External config repo (`ljudina/php.nvim`) cloned to `~/.local/share/nvim-php-con
 - All bash scripts use `set -euo pipefail` and source `lib.sh` for helpers
 - Scripts are idempotent: check before install, use `--needed`, guard with `command -v`
 - Package list files use `#` for comments and are sectioned by category
-- `|| true` is used where failure is acceptable (e.g., `noctalia setup || true`)
+- `|| true` is used where failure is acceptable (e.g., `gsettings set ... || true`)
 - Hyprland program values (`menu`, `powermenu`, `lockscreen`) are Lua locals near the top of `hyprland.lua` and referenced in keybinds below
-- Noctalia layer rule uses `no_anim` to prevent animation glitches on shell overlays
+- Noctalia layer rule (namespace `^noctalia-(bar-.+|notification|dock|panel|attached-panel|osd|window-switcher)$`) uses `no_anim` so Hyprland does not double-animate the shell's own surface animations

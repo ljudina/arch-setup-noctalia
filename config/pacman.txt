@@ -14,7 +14,6 @@ foot
 # Clipboard / auth
 wl-clipboard
 keepassxc
-wl-clip-persist
 
 # Audio
 pipewire
@@ -48,8 +47,8 @@ imagemagick
 hyprland
 hyprpicker
 
-# Noctalia optional dependencies
-qt6-multimedia
+# Desktop shell (Noctalia v5, official extra repo)
+noctalia
 
 # File manager & system tray
 nautilus

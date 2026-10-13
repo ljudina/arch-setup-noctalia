@@ -8,10 +8,12 @@ hl.monitor({ output = "HDMI-A-1", mode = "1920x1080@60", position = "0x0", scale
 local browser = "thorium-browser --enable-features=UseOzonePlatform --ozone-platform=wayland"
 local terminal = "footclient"
 local file_manager = "nautilus"
-local menu = "qs -c noctalia-shell ipc call launcher toggle"
-local powermenu = "qs -c noctalia-shell ipc call sessionMenu toggle"
-local bar_toggle = "qs -c noctalia-shell ipc call bar toggle"
-local lockscreen = "sh -c 'busctl --user call org.keepassxc.KeePassXC.MainWindow /keepassxc org.keepassxc.KeePassXC.MainWindow lockAllDatabases; qs -c noctalia-shell ipc call lockScreen lock'"
+-- Noctalia v5 is driven over IPC with "noctalia msg <command>".
+local noctalia = "noctalia msg "
+local menu = noctalia .. "panel-toggle launcher"
+local powermenu = noctalia .. "panel-toggle session"
+local bar_toggle = noctalia .. "bar-toggle"
+local lockscreen = "sh -c 'busctl --user call org.keepassxc.KeePassXC.MainWindow /keepassxc org.keepassxc.KeePassXC.MainWindow lockAllDatabases; noctalia msg session lock'"
 local password_manager = 'SSH_AUTH_SOCK="$XDG_RUNTIME_DIR/ssh-agent.socket" keepassxc'
 -- Outlook PWA via its Chrome desktop entry; on a machine without it the
 -- script installs and launches a Gmail PWA desktop entry instead.
@@ -29,9 +31,7 @@ hl.on("hyprland.start", function()
     hl.exec_cmd("~/.config/hypr/scripts/autostart.sh")
     hl.exec_cmd("dbus-update-activation-environment --systemd --all")
     hl.exec_cmd("systemctl --user start hyprland-session.target")
-    hl.exec_cmd("qs -c noctalia-shell")
-    hl.exec_cmd("wl-paste --watch cliphist store")
-    hl.exec_cmd("wl-clip-persist --clipboard regular")
+    hl.exec_cmd("noctalia")
     hl.exec_cmd(wait_notifyd(browser), { workspace = "1 silent" })
     hl.exec_cmd(wait_notifyd(mail), { workspace = "3 silent" })
     hl.exec_cmd(wait_notifyd(chat), { workspace = "4 silent" })
@@ -187,10 +187,11 @@ bind("SHIFT + T", hl.dsp.exec_cmd([[bash -c 'trash-empty && notify-send "Trash" 
 bind("SHIFT + P", hl.dsp.exec_cmd([[hyprshot -m region -o "$HOME/Pictures/Screenshots"]]))
 bind("SHIFT + L", hl.dsp.exec_cmd("hyprpicker -a"))
 
-bind("SHIFT + V", hl.dsp.exec_cmd("qs -c noctalia-shell ipc call clipboard toggle"))
-bind("N", hl.dsp.exec_cmd("qs -c noctalia-shell ipc call notifications toggle"))
-bind("comma", hl.dsp.exec_cmd("qs -c noctalia-shell ipc call settings focusOrToggle"))
-bind("TAB", hl.dsp.exec_cmd("qs -c noctalia-shell ipc call hypr toggleOverview"))
+bind("SHIFT + V", hl.dsp.exec_cmd(noctalia .. "panel-toggle clipboard"))
+bind("N", hl.dsp.exec_cmd(noctalia .. "panel-toggle control-center notifications"))
+bind("comma", hl.dsp.exec_cmd(noctalia .. "settings-toggle"))
+-- Noctalia window switcher; "hold" closes the overlay when the modifier is released.
+hl.bind("ALT + Tab", hl.dsp.exec_cmd(noctalia .. "window-switcher hold"))
 
 bind("left", hl.dsp.focus({ direction = "left" }))
 bind("right", hl.dsp.focus({ direction = "right" }))
@@ -222,12 +223,12 @@ end)
 bind("mouse:272", hl.dsp.window.drag(), { mouse = true })
 bind("mouse:273", hl.dsp.window.resize(), { mouse = true })
 
-hl.bind("XF86AudioRaiseVolume", hl.dsp.exec_cmd("qs -c noctalia-shell ipc call audio increment 5"), { locked = true, repeating = true })
-hl.bind("XF86AudioLowerVolume", hl.dsp.exec_cmd("qs -c noctalia-shell ipc call audio decrement 5"), { locked = true, repeating = true })
-hl.bind("XF86AudioMute", hl.dsp.exec_cmd("qs -c noctalia-shell ipc call audio mute"), { locked = true })
-hl.bind("XF86AudioMicMute", hl.dsp.exec_cmd("qs -c noctalia-shell ipc call audio micmute"), { locked = true })
-hl.bind("XF86MonBrightnessUp", hl.dsp.exec_cmd("qs -c noctalia-shell ipc call brightness increment 5"), { locked = true, repeating = true })
-hl.bind("XF86MonBrightnessDown", hl.dsp.exec_cmd("qs -c noctalia-shell ipc call brightness decrement 5"), { locked = true, repeating = true })
+hl.bind("XF86AudioRaiseVolume", hl.dsp.exec_cmd(noctalia .. "volume-up 5"), { locked = true, repeating = true })
+hl.bind("XF86AudioLowerVolume", hl.dsp.exec_cmd(noctalia .. "volume-down 5"), { locked = true, repeating = true })
+hl.bind("XF86AudioMute", hl.dsp.exec_cmd(noctalia .. "volume-mute"), { locked = true })
+hl.bind("XF86AudioMicMute", hl.dsp.exec_cmd(noctalia .. "mic-mute"), { locked = true })
+hl.bind("XF86MonBrightnessUp", hl.dsp.exec_cmd(noctalia .. "brightness-up 5"), { locked = true, repeating = true })
+hl.bind("XF86MonBrightnessDown", hl.dsp.exec_cmd(noctalia .. "brightness-down 5"), { locked = true, repeating = true })
 hl.bind("XF86AudioNext", hl.dsp.exec_cmd("playerctl next"), { locked = true })
 hl.bind("XF86AudioPause", hl.dsp.exec_cmd("playerctl play-pause"), { locked = true })
 hl.bind("XF86AudioPlay", hl.dsp.exec_cmd("playerctl play-pause"), { locked = true })
@@ -280,7 +281,15 @@ hl.window_rule({
     workspace = "3 silent",
 })
 
-for _, namespace in ipairs({ "hyprpicker", "selection", "^(noctalia)$" }) do
+-- Noctalia settings window (the only regular toplevel the shell opens).
+hl.window_rule({
+    name = "noctalia-settings-float",
+    match = { class = "^(dev\\.noctalia\\.Noctalia)$" },
+    float = true,
+    size = { 1080, 920 },
+})
+
+for _, namespace in ipairs({ "hyprpicker", "selection" }) do
     hl.layer_rule({
         name = "no-animation-" .. namespace,
         match = { namespace = namespace },
@@ -288,6 +297,20 @@ for _, namespace in ipairs({ "hyprpicker", "selection", "^(noctalia)$" }) do
     })
 end
 
-require("noctalia.colors")
-require("noctalia.layout")
-require("noctalia.outputs")
+-- Noctalia v5 layer surfaces animate themselves, so Hyprland's layer
+-- animations are disabled for them to avoid double animation.
+hl.layer_rule({
+    name = "noctalia",
+    match = { namespace = "^noctalia-(bar-.+|notification|dock|panel|attached-panel|osd|window-switcher)$" },
+    no_anim = true,
+    ignore_alpha = 0.5,
+    blur = true,
+    blur_popups = true,
+})
+
+-- Optional: Noctalia's Hyprland theme template (Settings -> Templates) writes
+-- ~/.config/hypr/noctalia.lua. Load it only when it exists.
+local has_theme, noctalia_theme = pcall(require, "noctalia")
+if has_theme then
+    noctalia_theme.apply_theme()
+end

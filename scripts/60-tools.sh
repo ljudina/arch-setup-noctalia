@@ -24,23 +24,27 @@ install_go_tools() {
   go install github.com/air-verse/air@latest
 }
 
+remove_noctalia_v4() {
+  # Noctalia v5 is a native rewrite packaged as "noctalia" in extra. The v4
+  # Quickshell packages and their helpers are no longer used by this setup.
+  # Removed one at a time so a package with other dependants does not block
+  # the rest. -Rns also drops deps that become orphans (e.g. qt6-multimedia).
+  local pkg
+  for pkg in noctalia-shell noctalia-qs cliphist matugen wl-clip-persist; do
+    pacman -Q "$pkg" >/dev/null 2>&1 || continue
+    log "Removing Noctalia v4 leftover: $pkg"
+    sudo pacman -Rns --noconfirm "$pkg" || warn "Could not remove $pkg (check dependants)"
+  done
+}
+
 setup_noctalia() {
-  if ! command -v qs >/dev/null 2>&1; then
-    warn "Quickshell (qs) not found (should be installed via noctalia-qs AUR package). Skipping setup."
+  if ! command -v noctalia >/dev/null 2>&1; then
+    warn "noctalia not found (should be installed from config/pacman.txt). Skipping setup."
     return 0
   fi
-
-  log "Running Noctalia initial setup"
-
-  # Noctalia is started from the Hyprland startup event in hyprland.lua
-  # Disable the systemd user service to avoid race conditions
-  systemctl --user disable noctalia-shell 2>/dev/null || true
-
-  # Create Hyprland Lua include stubs used by Noctalia integration
-  mkdir -p "$HOME/.config/hypr/noctalia"
-  for f in colors.lua layout.lua outputs.lua; do
-    [[ -f "$HOME/.config/hypr/noctalia/$f" ]] || touch "$HOME/.config/hypr/noctalia/$f"
-  done
+  # Noctalia is started from the Hyprland startup event in hyprland.lua and
+  # reads every *.toml in ~/.config/noctalia (symlinked from dotfiles/config).
+  log "Noctalia v5 present: $(noctalia --version 2>/dev/null | head -1)"
 }
 
 set_gnome_dark() {
@@ -54,5 +58,6 @@ set_gnome_dark() {
 
 install_atuin
 install_go_tools
+remove_noctalia_v4
 setup_noctalia
 set_gnome_dark
