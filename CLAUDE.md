@@ -76,7 +76,7 @@ v4 (Quickshell `noctalia-shell` + `noctalia-qs`) is unmaintained upstream and it
 
 Wired into `hyprland.lua` via Lua startup events, direct execution, or binds:
 
-- `autostart.sh` -- starts the `foot --server` daemon (shared backend for all `footclient` instances) plus a startup `footclient` pinned to workspace 2, and launches `udiskie` (USB automount), `iwgtk` (Wi-Fi tray), and the AC-power watcher; invoked from the `hyprland.start` event
+- `autostart.sh` -- starts the `foot --server` daemon (shared backend for all `footclient` instances) plus a startup `footclient` pinned to workspace 2, and launches `udiskie` (USB automount) and the AC-power watcher (Wi-Fi lives in Noctalia's bar `network` widget, so no tray applet); invoked from the `hyprland.start` event
 - `ac-power-watcher.sh` -- background loop that flips `power-profiles-daemon` between `performance` (AC online) and `power-saver` (AC offline); only acts on state changes so manual selection sticks
 - `lid-monitor.sh` -- reconciles the `eDP-1` panel against `/proc/acpi/button/lid/*/state`; idempotent, safe to call from lid event, hotplug, or session start
 - `monitor-watcher.sh` -- parallel watcher on Hyprland IPC and `/proc` lid state that re-runs `lid-monitor.sh` (works around dropped `bindl` lid events during dock hotplug cascades)
@@ -112,7 +112,7 @@ External config repo (`ljudina/php.nvim`) cloned to `~/.local/share/nvim-php-con
 The installer also targets CachyOS (checked against the August 2026 release). Differences it handles:
 
 - `paru` is no longer in the CachyOS installer but is in the `[cachyos]` repo; `20-paru.sh` installs from the repo when `pacman -Si paru` succeeds. `[cachyos]` sits above `[extra]` in `pacman.conf`, so repo order (not version) decides which build of a shared package name wins.
-- NetworkManager is the CachyOS default network stack. `40-services.sh` writes `/etc/NetworkManager/conf.d/wifi_backend.conf` (`wifi.backend=iwd`), disables `wpa_supplicant`, and enables `iwd`, so `iwgtk`/`iwctl` keep working without two supplicants fighting over the card. Wi-Fi profiles created under wpa_supplicant may need re-adding.
+- NetworkManager is the CachyOS default network stack. `40-services.sh` writes `/etc/NetworkManager/conf.d/wifi_backend.conf` (`wifi.backend=iwd`), disables `wpa_supplicant`, and enables `iwd`, so `iwctl` keeps working and only one supplicant owns the card. Wi-Fi profiles created under wpa_supplicant may need re-adding.
 - The CachyOS "Hyprland Noctalia" profile installs `cachyos-hypr-noctalia`, `uwsm` and `noctalia-greeter`. Choose the plain "Hyprland" session in the greeter. `hyprland.lua` still copes with the UWSM session (`INVOCATION_ID` set): it skips starting `hyprland-session.target` and exits via `uwsm stop`. The skel configs that package drops into `~/.config/hypr` and `~/.config/noctalia` are backed up by `70-dotfiles.sh`.
 - `[cachyos]` still ships `noctalia-shell` 4.x (Quickshell v4); `60-tools.sh` removes it like any other v4 leftover. Noctalia v5 (`noctalia`) comes from Arch `extra` only.
 - `linux-cachyos` builds Intel RAPL/powercap as modules, so `powerfix/` works unchanged. Do not install `tuned-cachy`; it replaces `power-profiles-daemon`, which the AC watcher needs.

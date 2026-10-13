@@ -5,5 +5,4 @@ etcher
 calcure
 hyprshot
 postman-bin
-iwgtk
 leaf-markdown-viewer

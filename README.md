@@ -156,7 +156,7 @@ are still installed.
 
 Lives in `dotfiles/config/hypr/scripts/`:
 
-- `autostart.sh` — runs `udiskie`, `iwgtk`, and the AC-power watcher
+- `autostart.sh` — runs `udiskie` and the AC-power watcher
 - `ac-power-watcher.sh` — switches `power-profiles-daemon` to `performance` on AC, `power-saver` off AC; only fires on state changes so manual profile selection sticks
 - `lid-monitor.sh` — reconciles the `eDP-1` panel against actual lid position; safe to call on lid events, hotplug, or session start
 - `monitor-watcher.sh` — watches Hyprland IPC and `/proc` lid state in parallel and re-runs `lid-monitor.sh` (works around dropped `bindl` events during hotplug cascades)
