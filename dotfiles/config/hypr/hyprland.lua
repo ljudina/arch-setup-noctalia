@@ -89,6 +89,12 @@ hl.config({
         force_default_wallpaper = 0,
         disable_hyprland_logo = true,
         focus_on_activate = true,
+        -- If the lock client (noctalia) dies while the session is locked,
+        -- Hyprland keeps the session locked and shows a red screen. Without
+        -- this a new lock client is denied and only a reboot gets you out.
+        -- With it, SUPER+L (a locked bind below) re-locks via the restarted
+        -- noctalia and brings back the password prompt.
+        allow_session_lock_restore = true,
     },
     group = {
         groupbar = {
@@ -176,7 +182,9 @@ bind("V", function()
 end)
 bind("D", hl.dsp.exec_cmd(menu))
 bind("escape", hl.dsp.exec_cmd(powermenu))
-bind("L", hl.dsp.exec_cmd(lockscreen))
+-- locked = true: still works on the red "lock app crashed" screen so the
+-- restarted noctalia can take the lock back (misc.allow_session_lock_restore).
+bind("L", hl.dsp.exec_cmd(lockscreen), { locked = true })
 bind("K", hl.dsp.exec_cmd(password_manager))
 bind("P", hl.dsp.window.pseudo())
 bind("J", hl.dsp.layout("togglesplit"))

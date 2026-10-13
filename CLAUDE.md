@@ -81,6 +81,7 @@ Wired into `hyprland.lua` via Lua startup events, direct execution, or binds:
 - `lid-monitor.sh` -- reconciles the `eDP-1` panel against `/proc/acpi/button/lid/*/state`; idempotent, safe to call from lid event, hotplug, or session start
 - `monitor-watcher.sh` -- parallel watcher on Hyprland IPC and `/proc` lid state that re-runs `lid-monitor.sh` (works around dropped `bindl` lid events during dock hotplug cascades)
 - `browser.sh` -- resolves whichever Thorium AUR build is installed (`thorium-browser-avx2`, `-avx`, `-sse4`, or plain `thorium-browser`) and launches it with the Wayland ozone flags; `hyprland.lua` (SUPER+B) and `mail.sh` use it. `70-dotfiles.sh` also seeds `~/.config/thorium/thorium-flags.conf` with the same flags and `hyprland.lua` pins `XDG_CONFIG_HOME`, because Thorium's wrapper only reads that file when the variable is set; this keeps launcher-started windows off XWayland (blurry on scaled monitors)
+- `noctalia-restart.sh` -- the only sanctioned way to restart the shell. Refuses while the session is locked (noctalia is also the ext-session-lock client; killing it while locked drops the lock, Hyprland shows a red "lock app crashed" screen, and the restarted shell does not re-lock). Relaunches via `hyprctl dispatch` so the new process inherits the compositor environment
 - `mail.sh` -- startup mail client for workspace 3: launches the Chrome Outlook PWA desktop entry if present, otherwise writes a Gmail PWA desktop entry (`gmail-pwa.desktop`, a Thorium `--app` window) and launches that; both window classes are pinned to workspace 3 by window rules in `hyprland.lua`
 
 ### Power Fix (`powerfix/`, `45-powerfix.sh`)
@@ -103,6 +104,7 @@ External config repo (`ljudina/php.nvim`) cloned to `~/.local/share/nvim-php-con
 **Modify Hyprland keybinds/config:** Edit `dotfiles/config/hypr/hyprland.lua`
 **Persist a Noctalia change made in its Settings UI:** copy the key from `~/.local/state/noctalia/settings.toml` into `dotfiles/config/noctalia/config.toml`, then delete it from `settings.toml` so the override stops shadowing the repo value. Leave runtime state there (`config_version`, `lockscreen_widgets`, `wallpaper.last`, `wallpaper.monitors.*`)
 **Modify autostart programs:** Edit `dotfiles/config/hypr/scripts/autostart.sh`
+**Restart Noctalia (apply a config/env change):** run `~/.config/hypr/scripts/noctalia-restart.sh`. Never `pkill noctalia` directly: it is the lock-screen client, and killing it while the session is locked (e.g. while a long-running task is still working after the user pressed SUPER+L) strands the user on Hyprland's red screen. Check `noctalia msg status` (`"locked"`) before any action that disturbs the shell
 **Add a Hyprland helper script:** Place in `dotfiles/config/hypr/scripts/` (made executable on install by `70-dotfiles.sh`)
 
 ## Conventions
@@ -112,4 +114,5 @@ External config repo (`ljudina/php.nvim`) cloned to `~/.local/share/nvim-php-con
 - Package list files use `#` for comments and are sectioned by category
 - `|| true` is used where failure is acceptable (e.g., `gsettings set ... || true`)
 - Hyprland program values (`menu`, `powermenu`, `lockscreen`) are Lua locals near the top of `hyprland.lua` and referenced in keybinds below
+- `misc.allow_session_lock_restore = true` and the `locked = true` flag on the SUPER+L bind are a pair: if the lock client ever dies, pressing SUPER+L on the red screen re-locks through the running noctalia and restores the password prompt instead of requiring a reboot
 - Noctalia layer rule (namespace `^noctalia-(bar-.+|notification|dock|panel|attached-panel|osd|window-switcher)$`) uses `no_anim` so Hyprland does not double-animate the shell's own surface animations
