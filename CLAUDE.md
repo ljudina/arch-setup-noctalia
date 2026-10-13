@@ -100,6 +100,7 @@ External config repo (`ljudina/php.nvim`) cloned to `~/.local/share/nvim-php-con
 **Add a home dotfile:** Place in `dotfiles/home/` (will be symlinked to `~/`)
 **Add a new install step:** Create `scripts/NN-name.sh`, add `run_step "NN-name.sh"` to `install.sh`
 **Modify Hyprland keybinds/config:** Edit `dotfiles/config/hypr/hyprland.lua`
+**Persist a Noctalia change made in its Settings UI:** copy the key from `~/.local/state/noctalia/settings.toml` into `dotfiles/config/noctalia/config.toml`, then delete it from `settings.toml` so the override stops shadowing the repo value. Leave runtime state there (`config_version`, `lockscreen_widgets`, `wallpaper.last`, `wallpaper.monitors.*`)
 **Modify autostart programs:** Edit `dotfiles/config/hypr/scripts/autostart.sh`
 **Add a Hyprland helper script:** Place in `dotfiles/config/hypr/scripts/` (made executable on install by `70-dotfiles.sh`)
 

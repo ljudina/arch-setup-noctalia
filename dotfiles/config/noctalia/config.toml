@@ -34,11 +34,18 @@ mode    = "dark"
 source  = "builtin"
 builtin = "Catppuccin"
 
+# Colour templates rendered on palette change (ids: noctalia theme --list-templates).
+[theme.templates]
+builtin_ids = ["foot"]
+
 [wallpaper]
 enabled             = true
 directory           = "~/Pictures/wallpaper"
 fill_mode           = "crop"
 transition_duration = 1500
+
+[wallpaper.default]
+path = "~/Pictures/wallpaper/mountain_view.jpg"
 
 [location]
 auto_locate = true
@@ -56,6 +63,9 @@ position = "top_right"
 [lockscreen]
 enabled = true
 
+[control_center.calendar]
+show_week_numbers = true
+
 # Keep GTK/libadwaita apps in sync with the shell's dark/light mode without
 # enabling the full GTK colour template.
 [hooks]
@@ -64,20 +74,24 @@ theme_mode_changed = "/usr/share/noctalia/assets/templates/gtk/apply.sh --appear
 # ── Bar ───────────────────────────────────────────────────────────────────────
 
 [bar.main]
-position           = "top"
-background_opacity = 0.93
-radius             = 12
-widget_spacing     = 6
-capsule            = true
-compositor_blur    = true
+position             = "top"
+background_opacity   = 0.93
+radius               = 0
+concave_edge_corners = false
+margin_edge          = 5
+margin_ends          = 5
+widget_spacing       = 6
+capsule              = true
+compositor_blur      = true
 
-start  = ["workspaces", "active_window", "media"]
+start  = ["workspaces", "active_window"]
 center = ["launcher", "clock", "weather", "sticky-notes"]
 end    = ["tray", "net-down", "net-up", "network", "keyboard_layout", "notifications", "battery", "volume", "brightness", "control-center"]
 
 [widget.workspaces]
 labels_only_when_occupied = true
 max_label_chars           = 2
+show_all_outputs          = true
 
 [widget.clock]
 format         = "{:%H:%M %a, %b %d}"
