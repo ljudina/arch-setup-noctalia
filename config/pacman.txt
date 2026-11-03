@@ -67,6 +67,10 @@ power-profiles-daemon
 xdg-desktop-portal
 xdg-desktop-portal-hyprland
 
+# Remote Wayland apps (waypipe ssh user@host <app>)
+waypipe
+openssh
+
 # Terminal workflow
 zsh
 trash-cli
