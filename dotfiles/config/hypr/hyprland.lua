@@ -51,6 +51,9 @@ hl.env("XCURSOR_SIZE", "24")
 hl.env("HYPRCURSOR_SIZE", "24")
 hl.env("QT_QPA_PLATFORM", "wayland")
 hl.env("ELECTRON_OZONE_PLATFORM_HINT", "auto")
+-- LibreOffice opens the NVIDIA dGPU for OpenCL and holds it for as long as
+-- it runs, which keeps the dGPU powered on battery (see powerfix/dgpu-battery.sh).
+hl.env("SAL_DISABLE_OPENCL", "1")
 -- Chromium-style wrappers (Thorium) only read ~/.config/<app>/<app>-flags.conf
 -- when XDG_CONFIG_HOME is set, so pin it to its default.
 hl.env("XDG_CONFIG_HOME", os.getenv("HOME") .. "/.config")

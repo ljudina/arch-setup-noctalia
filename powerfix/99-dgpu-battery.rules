@@ -1,0 +1,4 @@
+# Re-evaluate the dGPU power state when the AC adapter is plugged/unplugged.
+# The script can wait for the GPU to become idle, so it runs as a service
+# (udev kills long-running RUN programs).
+SUBSYSTEM=="power_supply", ATTR{type}=="Mains", ACTION=="change", RUN+="/usr/bin/systemctl --no-block restart dgpu-battery.service"

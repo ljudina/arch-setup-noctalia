@@ -29,7 +29,7 @@ Safe to re-run at any time. All package installs use `--needed --noconfirm`. Exi
 60-tools.sh   -> Atuin, Go tools, remove Noctalia v4 leftovers, Noctalia check
 65-nvim.sh    -> clone/update ljudina/php.nvim into ~/.local/share/nvim-php-config
 70-dotfiles.sh-> symlink dotfiles/ into ~ and ~/.config
-45-powerfix.sh-> install on-battery CPU power cap from powerfix/
+45-powerfix.sh-> install on-battery CPU power cap, dGPU watcher and power logger from powerfix/
 40-services.sh-> Wi-Fi (iwd, as NetworkManager backend when NM is installed), bluetooth, power-profiles-daemon, docker (runs last)
 ```
 
@@ -86,9 +86,14 @@ Wired into `hyprland.lua` via Lua startup events, direct execution, or binds:
 
 ### Power Fix (`powerfix/`, `45-powerfix.sh`)
 
-Caps CPU package power (MSR RAPL) while on battery to prevent hard power-offs when CPU peak draw exceeds what the battery pack can deliver (hit on ThinkPad P14s Gen 4 / i7-1370P during video calls). Portable across laptops: the script detects the Mains supply by type, captures the machine's own firmware limits at boot into `/run/rapl-powercap.stock`, and applies battery caps as percentages of them (PL1 40%, PL2 60%, PL4 50%; override via `/etc/default/rapl-powercap`). No-ops on hardware without Intel RAPL (AMD), so it installs everywhere.
+Caps CPU package power (MSR RAPL) while on battery to prevent hard power-offs when CPU peak draw exceeds what the battery pack can deliver (hit on ThinkPad P14s Gen 4 / i7-1370P during video calls). Portable across laptops: the script detects the Mains supply by type, captures the machine's own firmware limits at boot into `/run/rapl-powercap.stock`, and applies battery caps as percentages of them (PL1 40%, PL2 45%, PL4 30%; override via `/etc/default/rapl-powercap`). No-ops on hardware without Intel RAPL (AMD), so it installs everywhere.
 
 Deployed as: `/usr/local/bin/rapl-powercap.sh` (logic), a udev rule (re-apply on plug/unplug), `rapl-powercap.service` (apply at boot), and a system-sleep hook (re-apply after resume, since MSR limits reset on wake). Check activity with `journalctl -t rapl-powercap`.
+
+The CPU cap alone did not stop the power-offs (one more on 2026-11-17 with caps active and the CPU near idle), so two more pieces are installed by the same step:
+
+- `dgpu-battery.sh` + `dgpu-battery.service` + udev rule: RAPL does not cover the NVIDIA dGPU. The NVIDIA driver powers it down by itself (runtime D3) when no process has it open, so on battery the script only watches for holders every 15 s, logs them and sends a desktop notification; it never kills anything. Removing the device from the PCI bus was tried on 2026-11-17 and must not be reintroduced: the card stayed powered without a driver (about 15 W battery draw instead of about 10.5 W suspended) and a bridge rescan on AC did not bring it back. No-op without an NVIDIA GPU. Opt out with `DGPU_BATTERY_WATCH=0` in `/etc/default/dgpu-battery`. Log: `journalctl -t dgpu-battery`. `hyprland.lua` sets `SAL_DISABLE_OPENCL=1` because LibreOffice otherwise holds the dGPU open for OpenCL.
+- `power-trace.sh` + `power-trace.service`: flight recorder. Appends one fsynced line per second on battery (every 10 s on AC) to `/var/log/power-trace.log` with battery watts and volts, CPU package watts, hottest thermal zone, fan RPM and dGPU state. Reads sysfs only (never `nvidia-smi`, which would wake the dGPU). Each boot writes a `# start` marker, so after a power-off the lines just above the latest marker show the state at death. Rotates to `.1` at 16 MB.
 
 ### Neovim
 

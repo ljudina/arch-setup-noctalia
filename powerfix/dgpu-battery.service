@@ -1,0 +1,9 @@
+[Unit]
+Description=Report what keeps the NVIDIA dGPU awake on battery
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/dgpu-battery.sh
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,11 @@
+[Unit]
+Description=Log battery, CPU and dGPU power draw to /var/log/power-trace.log
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/power-trace.sh
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
